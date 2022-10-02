@@ -1,11 +1,10 @@
 #include "wrapper.h"
-#define DELTA_TIME 0.01
 
 int main(int argc, char** argv)
 {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT , 32), "Window");
     Wrapper wrapper(window);
-    wrapper.initial_state();
+    wrapper.initial_board();
 
     sf::Clock timer; 
     sf::Time delta_time = sf::seconds(DELTA_TIME);
@@ -18,7 +17,7 @@ int main(int argc, char** argv)
                     window.close();
                     break;
                 case sf::Event::KeyPressed:
-                    if (appEvent.key.code == sf::Keyboard::R) wrapper.initial_state();
+                    if (appEvent.key.code == sf::Keyboard::R) wrapper.initial_board();
                     break;
                 default:
                     break;
@@ -27,7 +26,7 @@ int main(int argc, char** argv)
 
         if (timer.getElapsedTime() > delta_time) {
             wrapper.display(window);
-            wrapper.next_state();
+            wrapper.update_board();
             timer.restart();            
         }
     }

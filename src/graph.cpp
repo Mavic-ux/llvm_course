@@ -1,23 +1,23 @@
 #include "wrapper.h"
 
 Wrapper::Wrapper(sf::RenderWindow& window) {
-    board = new bool*[A_HEIGHT];
-    for (int i = 0; i < A_HEIGHT; i++) {
-        *(board + i) = new bool[A_WIDTH];
+    board = new bool*[SCALED_HEIGHT];
+    for (int i = 0; i < SCALED_HEIGHT; i++) {
+        *(board + i) = new bool[SCALED_WIDTH];
     }
-    next_board = new bool*[A_HEIGHT];
-    for (int i = 0; i < A_HEIGHT; i++) {
-        *(next_board + i) = new bool[A_WIDTH];
+    next_board = new bool*[SCALED_HEIGHT];
+    for (int i = 0; i < SCALED_HEIGHT; i++) {
+        *(next_board + i) = new bool[SCALED_WIDTH];
     }
 }
 
 Wrapper::~Wrapper() {
-    for (int i = 0; i < A_HEIGHT; i++) {
+    for (int i = 0; i < SCALED_HEIGHT; i++) {
         delete[] board[i];
     }
     delete[] board;
 
-    for (int i = 0; i < A_HEIGHT; i++) {
+    for (int i = 0; i < SCALED_HEIGHT; i++) {
         delete[] next_board[i];
     }
     delete[] next_board;
@@ -31,4 +31,3 @@ void Wrapper::display(sf::RenderWindow& window) {
     window.draw(pixels);
     window.display();
 }
-

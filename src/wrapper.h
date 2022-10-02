@@ -1,14 +1,12 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 
-#include <cstdlib>
-#include <ctime>
-
-
+#define DELTA_TIME 0.01
 #define CELL_SIZE 2
 #define WIDTH 800
 #define HEIGHT 600
-#define A_WIDTH WIDTH / CELL_SIZE
-#define A_HEIGHT HEIGHT / CELL_SIZE
+#define SCALED_WIDTH WIDTH / CELL_SIZE
+#define SCALED_HEIGHT HEIGHT / CELL_SIZE
 
 class Wrapper
 {
@@ -21,13 +19,12 @@ class Wrapper
     public:
 
         Wrapper(sf::RenderWindow& window);
-        Wrapper(sf::RenderWindow& window, bool** inputArray);
         ~Wrapper();
 
         void put_pixel(size_t px, size_t py, sf::Color cell);
-        void initial_state();
+        void render_board();
+        void initial_board();
         int count_cells(int x, int y);
-        void next_state();
-        void process_board();
+        void update_board();
         void display(sf::RenderWindow& window);
 };
