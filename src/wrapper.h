@@ -1,12 +1,16 @@
 #include <SFML/Graphics.hpp>
 
+#include <cstdlib>
+#include <ctime>
+
+
 #define CELL_SIZE 2
 #define WIDTH 800
 #define HEIGHT 600
 #define A_WIDTH WIDTH / CELL_SIZE
 #define A_HEIGHT HEIGHT / CELL_SIZE
 
-class Game
+class Wrapper
 {
     private:
         bool** board;
@@ -16,15 +20,14 @@ class Game
 
     public:
 
-        Game(sf::RenderWindow& window);
-        Game(sf::RenderWindow& window, bool** inputArray);
-        ~Game();
+        Wrapper(sf::RenderWindow& window);
+        Wrapper(sf::RenderWindow& window, bool** inputArray);
+        ~Wrapper();
 
         void put_pixel(size_t px, size_t py, sf::Color cell);
-        void random_state();
-        void random_array();
+        void initial_state();
         int count_cells(int x, int y);
         void next_state();
-        void image_from_array();
-        void update(sf::RenderWindow& window);
+        void process_board();
+        void display(sf::RenderWindow& window);
 };
