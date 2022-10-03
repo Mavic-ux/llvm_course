@@ -24,10 +24,6 @@ void delete_env(bool** & board, bool** & next_board){
     delete[] next_board;
 }
 
-void put_pixel(sf::VertexArray& pixels, size_t px, size_t py, sf::Color cell) {
-    pixels.append(sf::Vertex(sf::Vector2f(px, py), cell));
-}
-
 void display(sf::VertexArray pixels, sf::RenderWindow& window) {
     window.draw(pixels);
     window.display();

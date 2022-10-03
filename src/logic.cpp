@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 
-void render_board(sf::VertexArray& pixels, bool** board) {
+void put_pixels(sf::VertexArray& pixels, bool** board) {
     for (int x = 0; x < WIDTH; x += CELL_SIZE)
     {
         for (int y = 0; y < HEIGHT; y += CELL_SIZE)
@@ -15,7 +15,7 @@ void render_board(sf::VertexArray& pixels, bool** board) {
             {
                 for (int xi = 0; xi < CELL_SIZE; xi++)
                 {
-                    put_pixel(pixels, x+xi, y+yi, cell);
+                    pixels.append(sf::Vertex(sf::Vector2f(x + xi, y + yi), cell));
                 }   
             }
         }        
@@ -30,7 +30,7 @@ void initial_board(bool** board) {
     }
 }
 
-void update_board(bool** board, bool** next_board) {
+void update_board(bool** & board, bool** & next_board) {
     for (int y = 0; y < SCALED_HEIGHT; y++) {
         for (int x = 0; x < SCALED_WIDTH; x++) {
             int count = count_cells(board, x, y);

@@ -30,9 +30,9 @@ int main(int argc, char** argv)
         }
 
         if (timer.getElapsedTime() > delta_time) {
-            display(pixels, window);
+            put_pixels(pixels, board);
             update_board(board, next_board);
-            render_board(pixels, board);;
+            display(pixels, window);
             timer.restart();            
         }
     }
