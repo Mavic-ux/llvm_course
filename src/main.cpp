@@ -2,9 +2,14 @@
 
 int main(int argc, char** argv)
 {
-    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT , 32), "Window");
-    Wrapper wrapper(window);
-    wrapper.initial_board();
+    bool** board;
+    bool** next_board;
+
+    sf::VertexArray pixels;
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
+
+    init_env(board, next_board);
+    initial_board(board);
 
     sf::Clock timer; 
     sf::Time delta_time = sf::seconds(DELTA_TIME);
@@ -17,7 +22,7 @@ int main(int argc, char** argv)
                     window.close();
                     break;
                 case sf::Event::KeyPressed:
-                    if (appEvent.key.code == sf::Keyboard::R) wrapper.initial_board();
+                    if (appEvent.key.code == sf::Keyboard::R) initial_board(board);
                     break;
                 default:
                     break;
@@ -25,11 +30,13 @@ int main(int argc, char** argv)
         }
 
         if (timer.getElapsedTime() > delta_time) {
-            wrapper.display(window);
-            wrapper.update_board();
+            display(pixels, window);
+            update_board(board, next_board);
+            render_board(pixels, board);;
             timer.restart();            
         }
     }
 
+    delete_env(board, next_board);
     return 0; 
 }
