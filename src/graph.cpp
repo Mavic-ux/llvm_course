@@ -1,30 +1,25 @@
 #include "wrapper.h"
 
-void init_env(bool** & board, bool** & next_board){
-    board = new bool*[SCALED_HEIGHT];
-    for (int i = 0; i < SCALED_HEIGHT; i++) {
-        *(board + i) = new bool[SCALED_WIDTH];
-    }
+sf::VertexArray pixels;
+sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
 
-    next_board = new bool*[SCALED_HEIGHT];
-    for (int i = 0; i < SCALED_HEIGHT; i++) {
-        *(next_board + i) = new bool[SCALED_WIDTH];
-    }
-}
 
-void delete_env(bool** & board, bool** & next_board){
-    for (int i = 0; i < SCALED_HEIGHT; i++) {
-        delete[] board[i];
-    }
-    delete[] board;
-
-    for (int i = 0; i < SCALED_HEIGHT; i++) {
-        delete[] next_board[i];
-    }
-    delete[] next_board;
-}
-
-void display(sf::VertexArray pixels, sf::RenderWindow& window) {
+void draw(bool board[]) {
+    for (int x = 0; x < WIDTH; x += 1)
+    {
+        for (int y = 0; y < HEIGHT; y += 1)
+        {
+            sf::Color cell = board[x * HEIGHT + y] ? sf::Color::Green : sf::Color::Black;
+            for (int yi = 0; yi < 1; yi++)
+            {
+                for (int xi = 0; xi < 1; xi++)
+                {
+                    pixels.append(sf::Vertex(sf::Vector2f(x + xi, y + yi), cell));
+                }   
+            }
+        }        
+    }    
+    
     window.draw(pixels);
     window.display();
-}
+}   

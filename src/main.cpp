@@ -1,42 +1,66 @@
 #include "wrapper.h"
+#include <iostream>
 
-int main(int argc, char** argv)
-{
-    bool** board;
-    bool** next_board;
+bool board[HEIGHT * WIDTH] = {0};
+bool next_board[HEIGHT * WIDTH] = {0};
 
-    sf::VertexArray pixels;
-    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
 
-    init_env(board, next_board);
-    initial_board(board);
+void initial_board() {
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            board[y * WIDTH + x] = rand()%2 == 0;
+        } 
+    }
+}
 
-    sf::Clock timer; 
-    sf::Time delta_time = sf::seconds(DELTA_TIME);
+int count_cells(int x, int y) {
+    int count = 0;
 
-    while (window.isOpen()) {
-        sf::Event appEvent;
-        while (window.pollEvent(appEvent)) {
-            switch(appEvent.type) {
-                case sf::Event::Closed:
-                    window.close();
-                    break;
-                case sf::Event::KeyPressed:
-                    if (appEvent.key.code == sf::Keyboard::R) initial_board(board);
-                    break;
-                default:
-                    break;
+    if (x > 0 && x < WIDTH - 1 && y > 0 && y < HEIGHT - 1) {
+        for (int dx = -1; dx <= 1; dx++){
+            for (int dy = -1; dy <= 1; dy++){
+
+                if (dx == 0 & dy == 0) continue;
+
+                if (board[(y + dy) * WIDTH + (x + dx)]){
+                    count++;;
+                }
             }
         }
 
-        if (timer.getElapsedTime() > delta_time) {
-            put_pixels(pixels, board);
-            update_board(board, next_board);
-            display(pixels, window);
-            timer.restart();            
+    }
+    
+    return count;
+}
+
+void update_board() {
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            int count = count_cells(x, y);
+            if (board[y * WIDTH + x]) {
+                next_board[y * WIDTH + x] = count == 2 || count == 3;
+            } else {
+                next_board[y * WIDTH + x] = count == 3;
+            }
         }
     }
 
-    delete_env(board, next_board);
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            board[y * WIDTH + x] = next_board[y * WIDTH + x];
+        }
+    }
+}
+
+
+int main(int argc, char** argv)
+{
+    initial_board();
+
+    while(1){
+        update_board();
+        draw(board);
+    }
+    
     return 0; 
 }
