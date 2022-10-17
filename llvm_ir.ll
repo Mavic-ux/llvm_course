@@ -1,90 +1,13 @@
-; ModuleID = 'src/main.cpp'
-source_filename = "src/main.cpp"
+; ModuleID = 'src/main.c'
+source_filename = "src/main.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-linux-gnu"
 
-%"class.std::ios_base::Init" = type { i8 }
-
-@_ZStL8__ioinit = internal global %"class.std::ios_base::Init" zeroinitializer, align 1
-@__dso_handle = external hidden global i8
-@board = dso_local global [360000 x i8] zeroinitializer, align 16
-@next_board = dso_local global [360000 x i8] zeroinitializer, align 16
-@llvm.global_ctors = appending global [1 x { i32, void ()*, i8* }] [{ i32, void ()*, i8* } { i32 65535, void ()* @_GLOBAL__sub_I_main.cpp, i8* null }]
-
-; Function Attrs: noinline uwtable
-define internal void @__cxx_global_var_init() #0 section ".text.startup" {
-  call void @_ZNSt8ios_base4InitC1Ev(%"class.std::ios_base::Init"* @_ZStL8__ioinit)
-  %1 = call i32 @__cxa_atexit(void (i8*)* bitcast (void (%"class.std::ios_base::Init"*)* @_ZNSt8ios_base4InitD1Ev to void (i8*)*), i8* getelementptr inbounds (%"class.std::ios_base::Init", %"class.std::ios_base::Init"* @_ZStL8__ioinit, i32 0, i32 0), i8* @__dso_handle) #3
-  ret void
-}
-
-declare dso_local void @_ZNSt8ios_base4InitC1Ev(%"class.std::ios_base::Init"*) unnamed_addr #1
-
-; Function Attrs: nounwind
-declare dso_local void @_ZNSt8ios_base4InitD1Ev(%"class.std::ios_base::Init"*) unnamed_addr #2
-
-; Function Attrs: nounwind
-declare dso_local i32 @__cxa_atexit(void (i8*)*, i8*, i8*) #3
+@board = common dso_local global [360000 x i8] zeroinitializer, align 16
+@next_board = common dso_local global [360000 x i8] zeroinitializer, align 16
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local void @_Z13initial_boardv() #4 {
-  %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
-  store i32 0, i32* %1, align 4
-  br label %3
-
-3:                                                ; preds = %25, %0
-  %4 = load i32, i32* %1, align 4
-  %5 = icmp slt i32 %4, 600
-  br i1 %5, label %6, label %28
-
-6:                                                ; preds = %3
-  store i32 0, i32* %2, align 4
-  br label %7
-
-7:                                                ; preds = %21, %6
-  %8 = load i32, i32* %2, align 4
-  %9 = icmp slt i32 %8, 600
-  br i1 %9, label %10, label %24
-
-10:                                               ; preds = %7
-  %11 = call i32 @rand() #3
-  %12 = srem i32 %11, 2
-  %13 = icmp eq i32 %12, 0
-  %14 = load i32, i32* %1, align 4
-  %15 = mul nsw i32 %14, 600
-  %16 = load i32, i32* %2, align 4
-  %17 = add nsw i32 %15, %16
-  %18 = sext i32 %17 to i64
-  %19 = getelementptr inbounds [360000 x i8], [360000 x i8]* @board, i64 0, i64 %18
-  %20 = zext i1 %13 to i8
-  store i8 %20, i8* %19, align 1
-  br label %21
-
-21:                                               ; preds = %10
-  %22 = load i32, i32* %2, align 4
-  %23 = add nsw i32 %22, 1
-  store i32 %23, i32* %2, align 4
-  br label %7
-
-24:                                               ; preds = %7
-  br label %25
-
-25:                                               ; preds = %24
-  %26 = load i32, i32* %1, align 4
-  %27 = add nsw i32 %26, 1
-  store i32 %27, i32* %1, align 4
-  br label %3
-
-28:                                               ; preds = %3
-  ret void
-}
-
-; Function Attrs: nounwind
-declare dso_local i32 @rand() #2
-
-; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @_Z11count_cellsii(i32 %0, i32 %1) #4 {
+define dso_local i32 @count_cells(i32 %0, i32 %1) #0 {
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
   %5 = alloca i32, align 4
@@ -192,7 +115,7 @@ define dso_local i32 @_Z11count_cellsii(i32 %0, i32 %1) #4 {
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local void @_Z12update_boardv() #4 {
+define dso_local void @update_board() #0 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
@@ -218,7 +141,7 @@ define dso_local void @_Z12update_boardv() #4 {
 13:                                               ; preds = %10
   %14 = load i32, i32* %2, align 4
   %15 = load i32, i32* %1, align 4
-  %16 = call i32 @_Z11count_cellsii(i32 %14, i32 %15)
+  %16 = call i32 @count_cells(i32 %14, i32 %15)
   store i32 %16, i32* %3, align 4
   %17 = load i32, i32* %1, align 4
   %18 = mul nsw i32 %17, 600
@@ -339,37 +262,29 @@ define dso_local void @_Z12update_boardv() #4 {
   ret void
 }
 
-; Function Attrs: noinline norecurse optnone uwtable
-define dso_local i32 @main(i32 %0, i8** %1) #5 {
+; Function Attrs: noinline nounwind optnone uwtable
+define dso_local i32 @main(i32 %0, i8** %1) #0 {
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
   %5 = alloca i8**, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  call void @_Z13initial_boardv()
+  call void @initial_board(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
   br label %6
 
 6:                                                ; preds = %2, %6
-  call void @_Z12update_boardv()
-  call void @_Z4drawPb(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
+  call void @update_board()
+  call void @draw(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
   br label %6
 }
 
-declare dso_local void @_Z4drawPb(i8*) #1
+declare dso_local void @initial_board(i8*) #1
 
-; Function Attrs: noinline uwtable
-define internal void @_GLOBAL__sub_I_main.cpp() #0 section ".text.startup" {
-  call void @__cxx_global_var_init()
-  ret void
-}
+declare dso_local void @draw(i8*) #1
 
-attributes #0 = { noinline uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #0 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #2 = { nounwind "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #3 = { nounwind }
-attributes #4 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #5 = { noinline norecurse optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.module.flags = !{!0}
 !llvm.ident = !{!1}
