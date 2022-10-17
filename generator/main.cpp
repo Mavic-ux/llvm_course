@@ -26,12 +26,14 @@ int main()
 
     module->getOrInsertGlobal ("board" , cur_type);
     board = module->getNamedGlobal("board");
+    board->setDSOLocal(true);
     board->setLinkage (llvm::GlobalValue::CommonLinkage);
     board->setAlignment (llvm::MaybeAlign (16));
     board->setInitializer (llvm::ConstantAggregateZero::get (cur_type));
 
     module->getOrInsertGlobal ("new_board" , cur_type);
     new_board = module->getNamedGlobal("new_board");
+    new_board->setDSOLocal(true);
     new_board->setLinkage (llvm::GlobalValue::CommonLinkage);
     new_board->setAlignment (llvm::MaybeAlign (16));
     new_board->setInitializer (llvm::ConstantAggregateZero::get (cur_type));

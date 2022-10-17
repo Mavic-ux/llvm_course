@@ -1,5 +1,5 @@
-#ifndef __IRGEN_GEN_HH__
-#define __IRGEN_GEN_HH__
+#ifndef __GAME_OF_LIFE__
+#define __GAME_OF_LIFE__
 
 #include <stdbool.h>
 
@@ -18,4 +18,4 @@ extern "C"
 }
 #endif /*__cplusplus */
 
-#endif /* __IRGEN_GEN_HH__ */
+#endif /*__GAME_OF_LIFE__*/
