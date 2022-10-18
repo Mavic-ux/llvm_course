@@ -8,13 +8,13 @@ int count_cells(int x, int y) {
     int count = 0;
 
     if (x > 0 && x < WIDTH - 1 && y > 0 && y < HEIGHT - 1) {
-        for (int dx = -1; dx <= 1; dx++){
-            for (int dy = -1; dy <= 1; dy++){
+        for (int dx = -1; dx <= 1; dx += 1){
+            for (int dy = -1; dy <= 1; dy += 1){
 
                 if (dx == 0 & dy == 0) continue;
 
                 if (board[(y + dy) * WIDTH + (x + dx)]){
-                    count++;;
+                    count += 1;;
                 }
             }
         }
@@ -52,5 +52,6 @@ int main(int argc, char** argv)
         update_board();
         draw(board);
     }
+
     return 0; 
 }
