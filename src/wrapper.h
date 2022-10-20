@@ -11,7 +11,7 @@ extern "C"
 {
 #endif
 
-    void initial_board(bool board[]);
+    void init_board(bool board[]);
     void draw(bool board[]);
 
 #ifdef __cplusplus

@@ -4,7 +4,7 @@
 sf::VertexArray pixels;
 sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
 
-extern "C" void initial_board(bool board[]) {
+extern "C" void init_board(bool board[]) {
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
             board[y * WIDTH + x] = rand()%2 == 0;

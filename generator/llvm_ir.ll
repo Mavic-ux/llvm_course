@@ -270,7 +270,7 @@ define dso_local i32 @main(i32 %0, i8** %1) #0 {
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  call void @initial_board(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
+  call void @init_board(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
   br label %6
 
 6:                                                ; preds = %2, %6
@@ -279,7 +279,7 @@ define dso_local i32 @main(i32 %0, i8** %1) #0 {
   br label %6
 }
 
-declare dso_local void @initial_board(i8*) #1
+declare dso_local void @init_board(i8*) #1
 
 declare dso_local void @draw(i8*) #1
 

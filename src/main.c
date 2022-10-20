@@ -46,7 +46,7 @@ void update_board() {
 
 int main(int argc, char** argv)
 {
-    initial_board(board);
+    init_board(board);
 
     while(1){
         update_board();
