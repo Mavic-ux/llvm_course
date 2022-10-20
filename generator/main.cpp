@@ -586,7 +586,7 @@ void llvm_update_board(){
     // %48 = getelementptr inbounds [360000 x i8], [360000 x i8]* @next_board, i64 0, i64 %47
     llvm::Type* arr_type_2 = llvm::ArrayType::get(builder.getInt8Ty(), 360000);
     llvm::Value *indices_2[2] = {builder.getInt64(0), i47};
-    auto *i48 = builder.CreateInBoundsGEP(arr_type_1, next_board, llvm::ArrayRef<llvm::Value *>({indices_1}, 2));
+    auto *i48 = builder.CreateInBoundsGEP(arr_type_1, next_board, llvm::ArrayRef<llvm::Value *>({indices_2}, 2));
 
     // %49 = zext i1 %42 to i8
     auto *i49 = builder.CreateZExt(i42, builder.getInt8Ty());
@@ -621,96 +621,166 @@ void llvm_update_board(){
 
     builder.SetInsertPoint(b54);
 
+    // br label %55
     builder.CreateBr(b55);
 
     builder.SetInsertPoint(b55);
 
     // %56 = load i32, i32* %1, align 4
+    auto *i56 = builder.CreateLoad(i1);
+    i56->setAlignment(llvm::Align(4));
+
     // %57 = add nsw i32 %56, 1
+    auto *i57 = builder.CreateNSWAdd(i56, builder.getInt32(1));
+
     // store i32 %57, i32* %1, align 4
+    auto *store_6 = builder.CreateStore(i57, i1); 
+    store_6->setAlignment(llvm::Align(4));
+
     // br label %6
+    builder.CreateBr(b6);
 
     builder.SetInsertPoint(b58);
 
     // store i32 0, i32* %4, align 4
+    auto *store_7 = builder.CreateStore(builder.getInt32(0), i4); 
+    store_7->setAlignment(llvm::Align(4));
+
     // br label %59
+    builder.CreateBr(b59);
 
     builder.SetInsertPoint(b59);
 
     // %60 = load i32, i32* %4, align 4
+    auto *i60 = builder.CreateLoad(i4);
+    i60->setAlignment(llvm::Align(4));
+
     // %61 = icmp slt i32 %60, 600
+    auto *i61 = builder.CreateICmpSLT(i60, builder.getInt32(600));
+
     // br i1 %61, label %62, label %89
+    builder.CreateCondBr(i61, b62, b89);
 
     builder.SetInsertPoint(b62);
 
     // store i32 0, i32* %5, align 4
+    auto *store_8 = builder.CreateStore(builder.getInt32(0), i5); 
+    store_8->setAlignment(llvm::Align(4));
+
     // br label %63
+    builder.CreateBr(b63);
 
     builder.SetInsertPoint(b63);
 
     // %64 = load i32, i32* %5, align 4
+    auto *i64 = builder.CreateLoad(i5);
+    i64->setAlignment(llvm::Align(4));
+
     // %65 = icmp slt i32 %64, 600
+    auto *i65 = builder.CreateICmpSLT(i64, builder.getInt32(600));
+
     // br i1 %65, label %66, label %85
+    builder.CreateCondBr(i65, b66, b85);
 
     builder.SetInsertPoint(b66);
 
     // %67 = load i32, i32* %4, align 4
+    auto *i67 = builder.CreateLoad(i4);
+    i67->setAlignment(llvm::Align(4));
 
     // %68 = mul nsw i32 %67, 600
+    auto *i68 = builder.CreateNSWMul(i67, builder.getInt32(600));
 
     // %69 = load i32, i32* %5, align 4
+    auto *i69 = builder.CreateLoad(i5);
+    i69->setAlignment(llvm::Align(4));
 
     // %70 = add nsw i32 %68, %69
+    auto *i70 = builder.CreateNSWAdd(i68, i69);
 
     // %71 = sext i32 %70 to i64
+    auto *i71 = builder.CreateSExt(i70, builder.getInt64Ty());
 
     // %72 = getelementptr inbounds [360000 x i8], [360000 x i8]* @next_board, i64 0, i64 %71
+    llvm::Type* arr_type_3 = llvm::ArrayType::get(builder.getInt8Ty(), 360000);
+    llvm::Value *indices_3[2] = {builder.getInt64(0), i71};
+    auto *i72 = builder.CreateInBoundsGEP(arr_type_3, next_board, llvm::ArrayRef<llvm::Value *>({indices_3}, 2));
 
     // %73 = load i8, i8* %72, align 1
+    auto *i73 = builder.CreateLoad(i72);
+    i73->setAlignment(llvm::Align(1));
 
     // %74 = trunc i8 %73 to i1
+    auto *i74 = builder.CreateTrunc(i73, builder.getInt1Ty());
 
     // %75 = load i32, i32* %4, align 4
+    auto *i75 = builder.CreateLoad(i4);
+    i75->setAlignment(llvm::Align(4));
 
     // %76 = mul nsw i32 %75, 600
+    auto *i76 = builder.CreateNSWMul(i75, builder.getInt32(600));
 
     // %77 = load i32, i32* %5, align 4
+    auto *i77 = builder.CreateLoad(i5);
+    i77->setAlignment(llvm::Align(4));
 
     // %78 = add nsw i32 %76, %77
+    auto *i78 = builder.CreateNSWAdd(i76, i77);
 
     // %79 = sext i32 %78 to i64
+    auto *i79 = builder.CreateSExt(i78, builder.getInt64Ty());
 
     // %80 = getelementptr inbounds [360000 x i8], [360000 x i8]* @board, i64 0, i64 %79
+    llvm::Type* arr_type_4 = llvm::ArrayType::get(builder.getInt8Ty(), 360000);
+    llvm::Value *indices_4[2] = {builder.getInt64(0), i79};
+    auto *i80 = builder.CreateInBoundsGEP(arr_type_4, board, llvm::ArrayRef<llvm::Value *>({indices_4}, 2));
 
     // %81 = zext i1 %74 to i8
+    auto *i81 = builder.CreateZExt(i74, builder.getInt8Ty());
 
     // store i8 %81, i8* %80, align 1
+    auto *store_9 = builder.CreateStore(i81, i80);
+    store_9->setAlignment(llvm::Align(1));
 
     // br label %82
+    builder.CreateBr(b82);
 
     builder.SetInsertPoint(b82);
 
     // %83 = load i32, i32* %5, align 4
+    auto *i83 = builder.CreateLoad(i5);
+    i83->setAlignment(llvm::Align(4));
 
     // %84 = add nsw i32 %83, 1
+    auto *i84 = builder.CreateNSWAdd(i83, builder.getInt32(1));
 
     // store i32 %84, i32* %5, align 4
+    auto *store_10 = builder.CreateStore(i84, i5); 
+    store_10->setAlignment(llvm::Align(4));
 
     // br label %63
+    builder.CreateBr(b63);
 
     builder.SetInsertPoint(b85);
 
     // br label %86
+    builder.CreateBr(b86);
 
     builder.SetInsertPoint(b86);
 
     // %87 = load i32, i32* %4, align 4
+    auto *i87 = builder.CreateLoad(i4);
+    i87->setAlignment(llvm::Align(4));
 
     // %88 = add nsw i32 %87, 1
+    auto *i88 = builder.CreateNSWAdd(i87, builder.getInt32(1));
 
     // store i32 %88, i32* %4, align 4
+    auto *store_11 = builder.CreateStore(i88, i4); 
+    store_11->setAlignment(llvm::Align(4));
 
     // br label %59
+    builder.CreateBr(b59);
 
     builder.SetInsertPoint(b89);
     
@@ -793,7 +863,7 @@ void llvm_main(){
     draw_func->setDSOLocal(true);
 
     // call void @draw(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
-    auto *i7 = builder.CreateInBoundsGEP(cur_type, next_board, llvm::ArrayRef<llvm::Value *>({indices}, 2));    
+    auto *i7 = builder.CreateInBoundsGEP(cur_type, board, llvm::ArrayRef<llvm::Value *>({indices}, 2));    
     builder.CreateCall(module->getFunction("draw"), i7);
 
     builder.CreateBr(b6);
@@ -824,14 +894,6 @@ int main()
     llvm_main();
 
     dump_llmv_ir();
-   
-
-    // Interpreter of LLVM IR
-    // std::cout << "Running code... \n";
-    // llvm::ExecutionEngine *ee = llvm::EngineBuilder(std::unique_ptr<llvm::Module>(module)).create();
-    // ee->finalizeObject();
-    // std::vector<llvm::GenericValue> noargs;
-    // llvm::GenericValue v = ee->runFunction(m)
 
     return 0;
 }

@@ -120,10 +120,10 @@ define dso_local void @update_board() {
   store i32 0, i32* %1, align 4
   br label %6
 
-6:                                                ; preds = %0
+6:                                                ; preds = %55, %0
   %7 = load i32, i32* %1, align 4
   %8 = icmp slt i32 %7, 600
-  br i1 %8, label %9, label %56
+  br i1 %8, label %9, label %58
 
 9:                                                ; preds = %6
   store i32 0, i32* %2, align 4
@@ -179,7 +179,7 @@ define dso_local void @update_board() {
   %45 = load i32, i32* %2, align 4
   %46 = add nsw i32 %44, %45
   %47 = sext i32 %46 to i64
-  %48 = getelementptr inbounds [360000 x i8], [360000 x i8]* @next_board, i64 0, i64 %37
+  %48 = getelementptr inbounds [360000 x i8], [360000 x i8]* @next_board, i64 0, i64 %47
   %49 = zext i1 %42 to i8
   store i8 %49, i8* %48, align 1
   br label %50
@@ -197,24 +197,64 @@ define dso_local void @update_board() {
   br label %55
 
 55:                                               ; preds = %54
+  %56 = load i32, i32* %1, align 4
+  %57 = add nsw i32 %56, 1
+  store i32 %57, i32* %1, align 4
+  br label %6
 
-56:                                               ; preds = %6
+58:                                               ; preds = %6
+  store i32 0, i32* %4, align 4
+  br label %59
 
-57:                                               ; No predecessors!
+59:                                               ; preds = %86, %58
+  %60 = load i32, i32* %4, align 4
+  %61 = icmp slt i32 %60, 600
+  br i1 %61, label %62, label %89
 
-58:                                               ; No predecessors!
+62:                                               ; preds = %59
+  store i32 0, i32* %5, align 4
+  br label %63
 
-59:                                               ; No predecessors!
+63:                                               ; preds = %82, %62
+  %64 = load i32, i32* %5, align 4
+  %65 = icmp slt i32 %64, 600
+  br i1 %65, label %66, label %85
 
-60:                                               ; No predecessors!
+66:                                               ; preds = %63
+  %67 = load i32, i32* %4, align 4
+  %68 = mul nsw i32 %67, 600
+  %69 = load i32, i32* %5, align 4
+  %70 = add nsw i32 %68, %69
+  %71 = sext i32 %70 to i64
+  %72 = getelementptr inbounds [360000 x i8], [360000 x i8]* @next_board, i64 0, i64 %71
+  %73 = load i8, i8* %72, align 1
+  %74 = trunc i8 %73 to i1
+  %75 = load i32, i32* %4, align 4
+  %76 = mul nsw i32 %75, 600
+  %77 = load i32, i32* %5, align 4
+  %78 = add nsw i32 %76, %77
+  %79 = sext i32 %78 to i64
+  %80 = getelementptr inbounds [360000 x i8], [360000 x i8]* @board, i64 0, i64 %79
+  %81 = zext i1 %74 to i8
+  store i8 %81, i8* %80, align 1
+  br label %82
 
-61:                                               ; No predecessors!
+82:                                               ; preds = %66
+  %83 = load i32, i32* %5, align 4
+  %84 = add nsw i32 %83, 1
+  store i32 %84, i32* %5, align 4
+  br label %63
 
-62:                                               ; No predecessors!
+85:                                               ; preds = %63
+  br label %86
 
-63:                                               ; No predecessors!
+86:                                               ; preds = %85
+  %87 = load i32, i32* %4, align 4
+  %88 = add nsw i32 %87, 1
+  store i32 %88, i32* %4, align 4
+  br label %59
 
-64:                                               ; No predecessors!
+89:                                               ; preds = %59
   ret void
 }
 
@@ -230,7 +270,7 @@ define dso_local i32 @main(i32 %0, i8** %1) {
 
 6:                                                ; preds = %6, %2
   call void @update_board()
-  call void @draw(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @next_board, i64 0, i64 0))
+  call void @draw(i8* getelementptr inbounds ([360000 x i8], [360000 x i8]* @board, i64 0, i64 0))
   br label %6
 }
 
