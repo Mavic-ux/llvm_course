@@ -1,5 +1,4 @@
 %language "c++"
-%skeleton "lalr1.cc"
 
 %define api.value.type variant
 %param {Driver* driver}
@@ -83,7 +82,6 @@ globalScope:    globalScope globalArrDecl           {
                                                         auto&& scope = driver->m_currentScope;
                                                         scope->insertChild($2);
                                                     };
-              | /* empty */                         {};
 
 globalArrDecl:  IDENTIFIER LAB INTEGER RAB SCOLON   {
                                                         auto&& scope = driver->m_currentScope;

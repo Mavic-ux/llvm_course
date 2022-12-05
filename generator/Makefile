@@ -13,4 +13,4 @@ main.o: generated_llvm_ir.ll
 	${CC} -c generated_llvm_ir.ll -fPIE -o main.o
 
 clean:
-	rm -rf *.o
+	rm -rf *.o generated_llvm_ir.ll 
