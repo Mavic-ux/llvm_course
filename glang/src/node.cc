@@ -8,10 +8,45 @@ CodeGenBlock::CodeGenBlock() {
     m_builder = std::make_unique<llvm::IRBuilder<>>(*m_context);
 }
 
-std::shared_ptr<DeclN> ScopeN::getDeclIfVisible(const std::string& name) const {
-    std::shared_ptr<DeclN> ret = nullptr;
-    auto&& it = m_symTable.find(name);
-    if(it != m_symTable.end()) {
+void CodeGenBlock::ImportGraphics(std::shared_ptr<ScopeN> globalScope) {
+     llvm::FunctionType* functTy = llvm::FunctionType::get(m_builder->getInt32Ty(), false);
+
+    // __glang_gl_rand
+    std::string name = "glang_gl_rand";
+    auto&& decl = std::make_shared<glang::FuncDeclare>(name);
+    llvm::Function* func = llvm::Function::Create(functTy, llvm::Function::ExternalLinkage, name, *m_module);
+    decl->setFunc(func);
+    globalScope->insertDecl(name, decl);
+
+    // __glang_gl_flush
+    name = "__glang_gl_flush";
+    decl = std::make_shared<glang::FuncDeclare>(name);
+    functTy = llvm::FunctionType::get(m_builder->getVoidTy(), false);
+    func = llvm::Function::Create(functTy, llvm::Function::ExternalLinkage, name, *m_module);
+    decl->setFunc(func);
+    globalScope->insertDecl(name, decl);
+
+    // __glang_put_pixel
+    name = "__glang_gl_put_pixel";
+    decl = std::make_shared<glang::FuncDeclare>(name);
+    functTy = llvm::FunctionType::get(
+        m_builder->getVoidTy(), 
+        {
+            m_builder->getInt32Ty(), 
+            m_builder->getInt32Ty(), 
+            m_builder->getInt32Ty()
+        }, 
+        false
+    );
+    func = llvm::Function::Create(functTy, llvm::Function::ExternalLinkage, name, *m_module);
+    decl->setFunc(func);
+    globalScope->insertDecl(name, decl);
+}
+
+std::shared_ptr<Declare> ScopeN::getDeclIfVisible(const std::string& name) const {
+    std::shared_ptr<Declare> ret = nullptr;
+    auto&& it = m_MapTable.find(name);
+    if(it != m_MapTable.end()) {
         return it->second;
     }
     if(m_parent) {
@@ -58,8 +93,7 @@ llvm::Value* BinOpN::codegen(CodeGenBlock& ctx) {
     case BinOp::Div:
         return ctx.m_builder->CreateSDiv(lhsCodeGen, rhsCodeGen);
     case BinOp::Mod:
-        // todo
-        assert(0);
+        return ctx.m_builder->CreateSRem(lhsCodeGen, rhsCodeGen);
     case BinOp::Mult:
         return ctx.m_builder->CreateMul(lhsCodeGen, rhsCodeGen);
     case BinOp::And:
@@ -140,7 +174,9 @@ llvm::Value* IfN::codegen(CodeGenBlock& ctx) {
     builder->CreateCondBr(conditionCodegen, taken, notTaken);
     builder->SetInsertPoint(taken);
     m_block->codegen(ctx);
-    builder->CreateBr(notTaken);
+    if (!taken->getTerminator()) {
+        builder->CreateBr(notTaken);
+    }
     builder->SetInsertPoint(notTaken);
     return nullptr;
 }
@@ -156,6 +192,7 @@ llvm::Value* WhileN::codegen(CodeGenBlock& ctx) {
 
     llvm::BasicBlock *takenBB = llvm::BasicBlock::Create(*context, "", func);
     llvm::BasicBlock *notTakenBB = llvm::BasicBlock::Create(*context, "", func);
+    ctx.m_lastWhileNotTaken = notTakenBB;
     llvm::BasicBlock *conditionBB = llvm::BasicBlock::Create(*context, "", func);
 
     builder->CreateBr(conditionBB);
@@ -171,7 +208,12 @@ llvm::Value* WhileN::codegen(CodeGenBlock& ctx) {
     return nullptr;
 }
 
-llvm::Value* FuncDeclN::codegen(CodeGenBlock& ctx) {
+llvm::Value* BreakN::codegen(CodeGenBlock& ctx) {
+    ctx.m_builder->CreateBr(ctx.m_lastWhileNotTaken);
+    return nullptr;
+}
+
+llvm::Value* FuncDeclare::codegen(CodeGenBlock& ctx) {
     if (!m_func) {
         auto&& module = ctx.m_module;
         auto&& builder = ctx.m_builder;
@@ -202,11 +244,11 @@ llvm::Value* FuncN::codegen(CodeGenBlock& ctx) {
     builder->SetInsertPoint(initBB);
 
     auto&& argNames = m_header->getArgNames();
-    auto&& symTable = m_scope->getSymTab();
+    auto&& MapTable = m_scope->getSymTab();
 
     for(std::size_t i = 0; i < argNames.size(); ++i) {
-        auto&& it = symTable.find(argNames[i]);
-        if(it != symTable.end()) {
+        auto&& it = MapTable.find(argNames[i]);
+        if(it != MapTable.end()) {
             auto&& decl = std::dynamic_pointer_cast<DeclVarN>(it->second);
             decl->codegen(ctx);
             auto&& argVal = func->getArg(i);
@@ -232,28 +274,17 @@ llvm::Value* FuncCallN::codegen(CodeGenBlock& ctx) {
     auto* funcDecl = llvm::dyn_cast<llvm::Function>(m_funcDecl->codegen(ctx));
     auto* funcTy = funcDecl->getFunctionType();
 
-    auto&& symTable = m_currScope->getSymTab();
-
     std::vector<llvm::Value*> args;
     for (auto&& name : m_argNames) {
-        auto&& it = symTable.find(name);
-        assert(it != symTable.end());
-        args.push_back(it->second->codegen(ctx));
+        auto&& it = m_currScope->getDeclIfVisible(name);
+        assert(it != nullptr);
+        args.push_back(it->codegen(ctx));
     }
 
     auto* ret = builder->CreateCall(funcTy, funcDecl, args);
     return ret;
 }
 
-llvm::Value* DeclGlobalArrN::codegen(CodeGenBlock& ctx) {
-    auto&& module = ctx.m_module;
-    auto&& builder = ctx.m_builder;
-    auto&& context = ctx.m_context;
-
-    m_arrayType = llvm::ArrayType::get(builder->getInt32Ty(), m_size);
-    m_array = module->getOrInsertGlobal(m_name, m_arrayType);
-    return m_array;
-}
 
 llvm::Value* ArrAccessN::codegen(CodeGenBlock& ctx) {
     auto&& module = ctx.m_module;
@@ -269,4 +300,4 @@ llvm::Value* ArrAccessN::codegen(CodeGenBlock& ctx) {
     return builder->CreateLoad(builder->getInt32Ty(), m_ptr);
 }
 
-} // namespace glang
+} 

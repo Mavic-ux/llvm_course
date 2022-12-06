@@ -5,14 +5,15 @@
 %}
 
 WS [ \t\n\v]+
-NAT_NUMBER [0]|[1-9][0-9]*
-IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
+NAT_NUMBER [0-9][0-9]*(.[0-9]+)?
+IDENTIFIER [a-zA-Z][a-zA-Z0-9_]*[_]*
 
 %%
 "return"    return yy::parser::token_type::RETURN;
 "while"     return yy::parser::token_type::WHILE;
 "if"        return yy::parser::token_type::IF;
 "def"        return yy::parser::token_type::DEF;
+"break"     return yy::parser::token_type::BREAK;
 
 ";"         return yy::parser::token_type::SCOLON;
 "{"         return yy::parser::token_type::LCB;
@@ -36,9 +37,9 @@ IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 
 "?"         return yy::parser::token_type::INPUT;
 
-"||"        return yy::parser::token_type::OR;
-"&&"        return yy::parser::token_type::AND;
-"!"         return yy::parser::token_type::NOT;
+"or"        return yy::parser::token_type::OR;
+"and"        return yy::parser::token_type::AND;
+"not"         return yy::parser::token_type::NOT;
 
 "+"         return yy::parser::token_type::PLUS;
 "-"         return yy::parser::token_type::MINUS;
@@ -49,6 +50,6 @@ IDENTIFIER [a-zA-Z][a-zA-Z0-9]*
 
 {WS}        
 {NAT_NUMBER}   return yy::parser::token_type::INTEGER;
-{IDENTIFIER}      return yy::parser::token_type::IDENTIFIER;
+{IDENTIFIER}   return yy::parser::token_type::IDENTIFIER;
                 
 %%

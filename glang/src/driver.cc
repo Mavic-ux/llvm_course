@@ -4,6 +4,7 @@ namespace yy {
     
 Driver::Driver(std::istream& in, std::ostream& out) {
     m_lexer = std::make_unique<yyFlexLexer>(in, out);
+    m_codegenCtx.ImportGraphics(m_currentScope);
 }
 
 bool Driver::parse() {

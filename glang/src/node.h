@@ -21,22 +21,25 @@
 
 namespace glang {
 
+class ScopeN;
+
 struct CodeGenBlock {
     CodeGenBlock();
     std::unique_ptr<llvm::LLVMContext> m_context = nullptr;
     std::unique_ptr<llvm::Module> m_module = nullptr;
     std::unique_ptr<llvm::IRBuilder<>> m_builder = nullptr;
+
+    llvm::BasicBlock* m_lastWhileNotTaken = nullptr;
+    void ImportGraphics(std::shared_ptr<ScopeN> globalScope);
 };
 
 enum class BinOp {
-    /* arithm */
     Plus,
     Minus,
     Div,
     Mod,
     Mult,
 
-    /* logic */
     And,
     Or,
     Equal,
@@ -88,11 +91,11 @@ private:
     UnOp m_op;
 };
 
-struct DeclN : public INode {
+struct Declare : public INode {
     virtual llvm::Value* codegen(CodeGenBlock& ctx) override = 0;
 };
 
-class DeclVarN : public DeclN {
+class DeclVarN : public Declare {
 public:
     llvm::Value* codegen(CodeGenBlock& ctx) override;
     void store(CodeGenBlock& ctx, llvm::Value* val);
@@ -100,32 +103,34 @@ private:
     llvm::Value* m_alloca = nullptr;
 };
 
-class FuncDeclN;
+class FuncDeclare;
 
 class ScopeN : public INode {
 public:
     ScopeN() = default;
-    ScopeN(std::shared_ptr<ScopeN> parent) : m_parent{parent} {}
+    ScopeN(std::shared_ptr<ScopeN> parent) : m_parent{parent} {
+        m_parentFunc = parent->getParentFunc();
+    }
 
     void insertChild(std::shared_ptr<INode> child) { m_childs.push_back(child); }
     std::shared_ptr<ScopeN> getParent() const { return m_parent; }
-    std::shared_ptr<DeclN> getDeclIfVisible(const std::string& name) const;
-    void insertDecl(const std::string& name, std::shared_ptr<DeclN> decl) { m_symTable[name] = decl; }
+    std::shared_ptr<Declare> getDeclIfVisible(const std::string& name) const;
+    void insertDecl(const std::string& name, std::shared_ptr<Declare> decl) { m_MapTable[name] = decl; }
     llvm::Value* codegen(CodeGenBlock& ctx) override;
 
-    void setParentFunc(std::shared_ptr<FuncDeclN> parentFunc) { m_parentFunc = parentFunc; }
-    std::shared_ptr<FuncDeclN> getParentFunc() const { return m_parentFunc; }
+    void setParentFunc(std::shared_ptr<FuncDeclare> parentFunc) { m_parentFunc = parentFunc; }
+    std::shared_ptr<FuncDeclare> getParentFunc() const { return m_parentFunc; }
 
-    using SymTab = std::unordered_map<std::string, std::shared_ptr<DeclN>>;
-    const SymTab& getSymTab() const { return m_symTable; } 
+    using SymTab = std::unordered_map<std::string, std::shared_ptr<Declare>>;
+    const SymTab& getSymTab() const { return m_MapTable; } 
 private:
     std::vector<std::shared_ptr<INode>> m_childs;
     std::shared_ptr<ScopeN> m_parent = nullptr;
-    std::shared_ptr<FuncDeclN> m_parentFunc = nullptr;
-    SymTab m_symTable;
+    std::shared_ptr<FuncDeclare> m_parentFunc = nullptr;
+    SymTab m_MapTable;
 };
 
-class DeclGlobalArrN : public DeclN {
+class DeclGlobalArrN : public Declare {
 public:
     DeclGlobalArrN(std::int32_t size) : m_size{size} {}
     void setName(const std::string& name) { m_name = name; }
@@ -178,12 +183,17 @@ private:
     std::shared_ptr<ScopeN> m_currentScope;
 };
 
-class FuncDeclN : public DeclN {
+struct BreakN : public INode {
+    llvm::Value* codegen(CodeGenBlock& ctx) override;
+};
+
+class FuncDeclare : public Declare {
 public:
-    FuncDeclN(const std::string& name, const std::vector<std::string>& argNames = {}) : m_argNames{argNames}, m_name{name} {}
+    FuncDeclare(const std::string& name, const std::vector<std::string>& argNames = {}) : m_argNames{argNames}, m_name{name} {}
     llvm::Value* codegen(CodeGenBlock& ctx) override;
     const std::vector<std::string>& getArgNames() const { return m_argNames; }
     const std::string& getName() const { return m_name; }
+    void setFunc(llvm::Function* func) { m_func = func; }
 private:
     std::vector<std::string> m_argNames;
     std::string m_name;
@@ -192,11 +202,11 @@ private:
 
 class FuncN : public INode {
 public:
-    FuncN(std::shared_ptr<ScopeN> scope, std::shared_ptr<FuncDeclN> header) : m_scope{scope}, m_header{header} {}
+    FuncN(std::shared_ptr<ScopeN> scope, std::shared_ptr<FuncDeclare> header) : m_scope{scope}, m_header{header} {}
     llvm::Value* codegen(CodeGenBlock& ctx) override;
 private:
     std::shared_ptr<ScopeN> m_scope;
-    std::shared_ptr<FuncDeclN> m_header;
+    std::shared_ptr<FuncDeclare> m_header;
 };
 
 class RetN : public INode {
