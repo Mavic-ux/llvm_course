@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "parser.h"
-#include "node.h"
+#include "ast.h"
 
 namespace yy {
 
@@ -28,7 +28,7 @@ public:
 private:
     std::unique_ptr<yyFlexLexer> m_lexer = nullptr;
     glang::CodeGenBlock m_codegenCtx;
-    std::shared_ptr<glang::ScopeN> m_currentScope = std::make_shared<glang::ScopeN>();
+    std::shared_ptr<glang::Scope> m_currentScope = std::make_shared<glang::Scope>();
     std::vector<std::string> m_currentFunctionArgs;
 };
 

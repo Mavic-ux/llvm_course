@@ -7,7 +7,6 @@
 extern "C" 
 {
 #endif
-    void __glang_print(int n);
     int __glang_gl_rand();
     void __glang_gl_put_pixel(int x, int y, int color);
     void __glang_gl_flush();

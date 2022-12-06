@@ -11,8 +11,9 @@ extern "C"
 {
 #endif
 
-    void init_board(bool board[]);
-    void draw(bool board[]);
+    int gl_rand();
+    void gl_put_pixel(int x, int y, int color);
+    void gl_flush();
 
 #ifdef __cplusplus
 }

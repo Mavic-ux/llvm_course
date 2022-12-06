@@ -1,8 +1,15 @@
 #include "wrapper.h"
 
-bool board[HEIGHT * WIDTH];
-bool next_board[HEIGHT * WIDTH];
+int board[HEIGHT * WIDTH];
+int next_board[HEIGHT * WIDTH];
 
+void init_board() {
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            board[y * WIDTH + x] = __glang_gl_rand()%2;
+        } 
+    }
+}
 
 int count_cells(int x, int y) {
     int count = 0;
@@ -10,10 +17,7 @@ int count_cells(int x, int y) {
     if (x > 0 && x < WIDTH - 1 && y > 0 && y < HEIGHT - 1) {
         for (int dx = -1; dx <= 1; dx += 1){
             for (int dy = -1; dy <= 1; dy += 1){
-
-                if (dx == 0 & dy == 0) continue;
-
-                if (board[(y + dy) * WIDTH + (x + dx)]){
+                if (!(dx == 0 & dy == 0) & (board[(y + dy) * WIDTH + (x + dx)] != 0)){
                     count += 1;;
                 }
             }
@@ -43,14 +47,32 @@ void update_board() {
     }
 }
 
+void draw() {
+    for (int x = 0; x < WIDTH; x += 1)
+    {
+        for (int y = 0; y < HEIGHT; y += 1)
+        {
+            for (int yi = 0; yi < 1; yi++){
+                for (int xi = 0; xi < 1; xi++)
+                {
+                    __glang_gl_put_pixel(x + xi, y + yi, board[x * HEIGHT + y]);
+                }   
+            }
+        }        
+    }    
+    
+    __glang_gl_flush();
+}   
+
+
 
 int main(int argc, char** argv)
 {
-    init_board(board);
+    init_board();
 
     while(1){
         update_board();
-        draw(board);
+        draw();
     }
 
     return 0; 

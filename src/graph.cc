@@ -4,30 +4,18 @@
 sf::VertexArray pixels;
 sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Window");
 
-extern "C" void init_board(bool board[]) {
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            board[y * WIDTH + x] = rand()%2 == 0;
-        } 
-    }
+extern "C" int __glang_gl_rand() {
+    return rand();
 }
 
-extern "C" void draw(bool board[]) {
-    for (int x = 0; x < WIDTH; x += 1)
-    {
-        for (int y = 0; y < HEIGHT; y += 1)
-        {
-            sf::Color cell = board[x * HEIGHT + y] ? sf::Color::Green : sf::Color::Black;
-            for (int yi = 0; yi < 1; yi++)
-            {
-                for (int xi = 0; xi < 1; xi++)
-                {
-                    pixels.append(sf::Vertex(sf::Vector2f(x + xi, y + yi), cell));
-                }   
-            }
-        }        
-    }    
-    
+extern "C" void __glang_gl_put_pixel(int x, int y, int status) {
+    sf::Color color = status ? sf::Color::Green : sf::Color::Black;
+    sf::Vertex point({static_cast<float>(x), static_cast<float>(y)}, color);
+    window.draw(&point, 1, sf::Points);
+}
+
+
+extern "C" void __glang_gl_flush() {
     window.draw(pixels);
     window.display();
-}   
+}

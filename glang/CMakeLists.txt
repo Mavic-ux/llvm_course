@@ -24,14 +24,17 @@ FLEX_TARGET(lexer ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.l  ${CMAKE_CURRENT_SOURC
 add_flex_bison_dependency(lexer parser)
 
 add_executable(${PROJECT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/library.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/driver.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/node.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ast.cc
     ${FLEX_lexer_OUTPUTS}  
     ${BISON_parser_OUTPUTS}
 )
 
 target_link_libraries(${PROJECT_NAME} LLVM)
+
+target_link_libraries(${PROJECT_NAME}  sfml-graphics sfml-window sfml-system )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE       

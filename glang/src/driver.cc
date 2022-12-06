@@ -13,21 +13,6 @@ bool Driver::parse() {
     return !res;
 }
 
-parser::token_type Driver::yylex(parser::semantic_type* yylval) {
-    parser::token_type token = static_cast<parser::token_type>(m_lexer->yylex());
-    if(token == yy::parser::token_type::IDENTIFIER) {
-        std::string name(m_lexer->YYText());
-        parser::semantic_type tmp;
-        tmp.as<std::string>() = name;
-        yylval->swap<std::string>(tmp);
-    } 
-    else if(token == yy::parser::token_type::INTEGER) {
-        yylval->as<int>() = std::atoi(m_lexer->YYText());
-    }
-
-    return token;
-}
-
 void Driver::codegen() {
     m_currentScope->codegen(m_codegenCtx);
 }
@@ -40,4 +25,23 @@ void Driver::dumpIR(std::ostream& out) {
     out << s;
 }
 
-} // namespace yy
+parser::token_type Driver::yylex(parser::semantic_type* yylval) {
+    auto token = static_cast<parser::token_type>(m_lexer->yylex());
+
+    switch (token)
+    {
+    case parser::token_type::INTEGER:
+        yylval->as<int>() = std::atoi(m_lexer->YYText());
+        break;
+
+    case parser::token_type::IDENTIFIER:
+        yylval->emplace<std::string>(m_lexer->YYText());
+        break;
+
+    default:
+        break;
+    }
+
+    return token;
+}
+}
